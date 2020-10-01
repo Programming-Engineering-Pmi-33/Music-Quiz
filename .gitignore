@@ -638,3 +638,6 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/macos,windows,dotnetcore,aspnetcore,visualstudio,jetbrains+all,visualstudiocode
+
+# Secret data
+appsettings.json
