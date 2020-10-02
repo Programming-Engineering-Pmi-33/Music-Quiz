@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using DbTestProject.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,8 +12,8 @@ namespace DbTestProject
         {
             return new User()
             {
-                Username = $"superuser",
-                Password = $"kebab",
+                Username = "superuser",
+                Password = "kebab",
                 AppRating = new AppRating()
                 {
                     Points = 5
@@ -37,40 +36,40 @@ namespace DbTestProject
             };
         }
 
-        static List<Quiz> GenerateQuizzes(int i)
+        static List<Quiz> GenerateQuizzes(int param)
         {
             return new List<Quiz>()
             {
                 new Quiz()
                 {
-                    PlayTime = 10 + i,
-                    Title = $"My quiz {i}",
-                    AnswerTime = 5 + i,
-                    QuizSongs = GenerateQuizSongs(i),
+                    PlayTime = 10 + param,
+                    Title = $"My quiz {param}",
+                    AnswerTime = 5 + param,
+                    QuizSongs = GenerateQuizSongs(param),
                     Genre = new Genre(){Name = "Rock"}
                 },
 
                 new Quiz()
                 {
-                    PlayTime = 15+i,
-                    Title = $"My quiz {i+1}",
-                    AnswerTime = 10+i,
-                    QuizSongs = GenerateQuizSongs(i+1),
+                    PlayTime = 15+param,
+                    Title = $"My quiz {param+1}",
+                    AnswerTime = 10+param,
+                    QuizSongs = GenerateQuizSongs(param+1),
                     Genre = new Genre(){Name = "Rap"}
                 }
             };
         }
 
-        static List<QuizSong> GenerateQuizSongs(int q)
+        static List<QuizSong> GenerateQuizSongs(int param)
         {
             var quizzesSongs = new List<QuizSong>();
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 var quizSong = new QuizSong()
                 {
                     Song = new Song()
                     {
-                        Link = $"http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG{q}{i}"
+                        Link = $"http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG{param}{i}"
                     }
                 };
                 quizzesSongs.Add(quizSong);
@@ -92,6 +91,7 @@ namespace DbTestProject
                     .Include(u => u.Scores)
                     .Include(u => u.AppRating)
                     .First();
+
                 PrintData(user);
             }
         }
@@ -101,18 +101,18 @@ namespace DbTestProject
             Console.WriteLine($"User: {user.Username}, password: {user.Password}");
             Console.WriteLine($"App rating: {user.AppRating.Points}");
             Console.WriteLine("Quizzes:");
-            foreach (var i in user.Quizzes)
+            foreach (var quiz in user.Quizzes)
             {
-                Console.WriteLine($"\nQuiz: {i.Title}, genre: {i.Genre.Name}, answer time: {i.AnswerTime}, play time: {i.PlayTime}\n\tSongs:");
-                foreach (var j in i.QuizSongs)
+                Console.WriteLine($"\nQuiz: {quiz.Title}, genre: {quiz.Genre.Name}, answer time: {quiz.AnswerTime}, play time: {quiz.PlayTime}\n\tSongs:");
+                foreach (var quizSong in quiz.QuizSongs)
                 {
-                    Console.WriteLine($"\tLink: {j.Song.Link}");
+                    Console.WriteLine($"\tLink: {quizSong.Song.Link}");
                 }
             }
             Console.WriteLine("Scores:");
-            foreach (var i in user.Scores)
+            foreach (var score in user.Scores)
             {
-                Console.WriteLine($"Name: {i.Quiz.Title}, points: {i.Points}");
+                Console.WriteLine($"Name: {score.Quiz.Title}, points: {score.Points}");
             }
         }
     }
