@@ -5,15 +5,14 @@ CREATE TABLE users (
 );
 
 CREATE TABLE genres (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(50) PRIMARY KEY
 );
 
 CREATE TABLE quizzes (
     id SERIAL PRIMARY KEY,
     owner_id INT REFERENCES users(id) NOT NULL,
     title VARCHAR(50) NOT NULL,
-    genre_id INT REFERENCES genres(id) NOT NULL,
+    genre VARCHAR(50) REFERENCES genres(name) NOT NULL,
     play_time INT NOT NULL,
     answer_time INT NOT NULL
 );
