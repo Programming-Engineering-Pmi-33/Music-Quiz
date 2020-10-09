@@ -16,7 +16,6 @@ namespace DbTestProject
 
         public TestDbContext()
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -34,6 +33,7 @@ namespace DbTestProject
             modelBuilder.Entity<QuizSong>().HasKey(qs => new {qs.QuizId, qs.SongId});
             modelBuilder.Entity<Score>().Property(u => u.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Song>().Property(u => u.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Genre>().HasKey(g => g.Id);
             modelBuilder.Entity<Genre>().Property(g => g.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Quiz>().Property(q => q.Title).HasMaxLength(50);
 

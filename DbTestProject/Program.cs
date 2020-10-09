@@ -83,16 +83,19 @@ namespace DbTestProject
             using (var context = new TestDbContext())
             {
 
-                context.Users.Add(GenerateUser());
-                context.SaveChanges();
+                if (context.Users.FirstOrDefault(u => u.Username == "superuser") == null)
+                {
+                    context.Users.Add(GenerateUser());
+                    context.SaveChanges();
+                }
 
-                var user = context.Users
-                    .Include(u => u.Quizzes)
+                var users = context.Users
+                    .Include(u => u.Quizzes).ThenInclude(x=>x.Genre)
+                    .Include(u => u.Quizzes).ThenInclude(x=>x.QuizSongs).ThenInclude(x=>x.Song)
                     .Include(u => u.Scores)
                     .Include(u => u.AppRating)
-                    .First();
-
-                PrintData(user);
+                    .ToList();
+                users.ForEach(u=>PrintData(u));
             }
         }
 

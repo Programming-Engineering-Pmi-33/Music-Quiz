@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbTestProject.Models
 {
@@ -20,7 +21,9 @@ namespace DbTestProject.Models
         [Required]
         public int AnswerTime { get; set; }
 
+        public int GenreId { get; set; }
 
+        [ForeignKey(nameof(GenreId))]
         public Genre Genre { get; set; }
         public List<QuizSong> QuizSongs { get; set; }
     }
