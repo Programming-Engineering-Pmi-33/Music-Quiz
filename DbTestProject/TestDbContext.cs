@@ -34,16 +34,16 @@ namespace DbTestProject
             modelBuilder.Entity<QuizSong>().HasKey(qs => new {qs.QuizId, qs.SongId});
             modelBuilder.Entity<Score>().Property(u => u.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Song>().Property(u => u.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Genre>().Property(g => g.Name).HasMaxLength(50);
+            modelBuilder.Entity<Genre>().Property(g => g.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Quiz>().Property(q => q.Title).HasMaxLength(50);
 
             modelBuilder.Entity<User>().ToTable("users");
             modelBuilder.Entity<Quiz>().ToTable("quizzes");
             modelBuilder.Entity<Genre>().ToTable("genres");
-            modelBuilder.Entity<AppRating>().ToTable("app-rating");
+            modelBuilder.Entity<AppRating>().ToTable("app_rating");
             modelBuilder.Entity<Score>().ToTable("scores");
             modelBuilder.Entity<Song>().ToTable("songs");
-            modelBuilder.Entity<QuizSong>().ToTable("quiz-songs");
+            modelBuilder.Entity<QuizSong>().ToTable("quiz_songs");
         }
 
         private static string GetDbConnection()
