@@ -23,7 +23,6 @@ namespace DbTestProject.Models
 
         public int GenreId { get; set; }
 
-        [ForeignKey(nameof(GenreId))]
         public Genre Genre { get; set; }
         public List<QuizSong> QuizSongs { get; set; }
     }
