@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using StorageLayer;
+using StorageLayer.Models;
 
 namespace ClientLayer
 {
@@ -22,7 +24,13 @@ namespace ClientLayer
     {
         public MainWindow()
         {
+            using(var context = new MusicalQuizDbContext())
+            {
+                Users = context.Users.ToList();
+            }
             InitializeComponent();
         }
+
+        public List<User> Users { get; set; }
     }
 }

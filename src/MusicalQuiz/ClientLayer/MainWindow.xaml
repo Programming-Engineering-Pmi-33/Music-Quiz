@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientLayer"
+        xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <DataGrid ItemsSource="{Binding Users}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,20,20,20"/>
     </Grid>
 </Window>
