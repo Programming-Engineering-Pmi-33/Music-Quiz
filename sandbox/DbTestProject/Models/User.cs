@@ -16,6 +16,6 @@ namespace DbTestProject.Models
 
         public List<Quiz> Quizzes { get; set; }
         public List<Score> Scores { get; set; }
-        public AppRating AppRating { get; set; }
+        public int AppRating { get; set; }
     }
 }
