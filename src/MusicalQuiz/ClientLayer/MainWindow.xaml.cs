@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using StorageLayer;
 using StorageLayer.Models;
 
@@ -32,14 +33,14 @@ namespace ClientLayer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void AddDataOnClick(object sender, RoutedEventArgs e)
         {
             using var context = new MusicalQuizDbContext();
 
             var userDmytro = new User()
             {
-                Username = $"Dmytrosh{context.Users.Count() + 1}",
-                Password = $"Dimon00{context.Users.Count() + 1}",
+                Username = $"User{context.Users.Count() + 1}",
+                Password = $"PaswordHash{context.Users.Count() + 1}",
                 AppRating = context.Users.Count() % 6,
                 Quizzes = new List<Quiz>()
             };
@@ -56,7 +57,7 @@ namespace ClientLayer
             var quiz = new Quiz()
             {
                 Title = $"Rock generation {context.Users.Count() + 1}",
-                Genre = context.Genres.FirstOrDefault(g => g.Name.Equals($"Rock{context.Users.Count() + 1}")),
+                Genre = context.Genres.FirstOrDefault(g => g.Name.Equals($"Rock{context.Users.Count()}")),
                 AnswerTime = context.Users.Count() + 1,
                 PlayTime = context.Users.Count() + 1 % 26 <= 2 ? 2 : context.Users.Count() + 1 % 26,
                 QuizSongs = new List<QuizSong>()
@@ -93,6 +94,16 @@ namespace ClientLayer
             OnPropertyChanged(nameof(Genres));
             OnPropertyChanged(nameof(Songs));
             OnPropertyChanged(nameof(Scores));
+        }
+
+        private void CleanDataOnClick(object sender, RoutedEventArgs e)
+        {
+            using var context = new MusicalQuizDbContext();
+            context.Users.RemoveRange(context.Users.ToList());
+            context.Genres.RemoveRange(context.Genres.ToList());
+            context.Songs.RemoveRange(context.Songs.ToList());
+            context.SaveChanges();
+            LoadData();
         }
     }
 }

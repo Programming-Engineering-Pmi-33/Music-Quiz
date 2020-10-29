@@ -24,8 +24,10 @@
 
                 <Label Content="Scores:"/>
                 <DataGrid ItemsSource="{Binding Scores, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
-
-                <Button Click="ButtonBase_OnClick" Height="100" Width="250" Content="Load"></Button>
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="AddDataOnClick" Height="100" Width="250" Content="Generate"></Button>
+                    <Button Click="CleanDataOnClick" Height="100" Width="250" Content="Clean"></Button>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
