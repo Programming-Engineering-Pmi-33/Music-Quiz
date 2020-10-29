@@ -10,12 +10,12 @@ namespace DbTestProject
         public DbSet<User> Users { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<Genre> Genres { get; set; }
-        public DbSet<AppRating> AppRatings { get; set; }
         public DbSet<Score> Scores { get; set; }
         public DbSet<Song> Songs { get; set; }
 
         public TestDbContext()
         {
+            Database.EnsureCreated();
             Database.EnsureCreated();
         }
 
@@ -40,7 +40,6 @@ namespace DbTestProject
             modelBuilder.Entity<User>().ToTable("users");
             modelBuilder.Entity<Quiz>().ToTable("quizzes");
             modelBuilder.Entity<Genre>().ToTable("genres");
-            modelBuilder.Entity<AppRating>().ToTable("app_rating");
             modelBuilder.Entity<Score>().ToTable("scores");
             modelBuilder.Entity<Song>().ToTable("songs");
             modelBuilder.Entity<QuizSong>().ToTable("quiz_songs");
