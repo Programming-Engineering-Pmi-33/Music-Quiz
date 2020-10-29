@@ -12,5 +12,10 @@ namespace StorageLayer.Models
         public string Link { get; set; }
 
         public List<QuizSong> QuizSong { get; set; }
+
+        public Song()
+        {
+            QuizSong = new List<QuizSong>();
+        }
     }
 }

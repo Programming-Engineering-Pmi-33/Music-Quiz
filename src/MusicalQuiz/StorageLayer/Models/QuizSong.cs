@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace StorageLayer.Models
+﻿namespace StorageLayer.Models
 {
     public class QuizSong
     {

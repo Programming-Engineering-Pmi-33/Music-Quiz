@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StorageLayer.Models
 {
@@ -8,7 +9,7 @@ namespace StorageLayer.Models
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string OwnerUserId { get; set; }
 
         [Required]
         public int QuizId { get; set; }
@@ -18,5 +19,9 @@ namespace StorageLayer.Models
 
 
         public Quiz Quiz { get; set; }
+
+        
+        [ForeignKey("OwnerUserId")]
+        public User OwnerUser { get; set; }
     }
 }

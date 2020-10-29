@@ -3,12 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClientLayer"
-        xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1000" Width="1000">
     <Grid>
-        <DataGrid ItemsSource="{Binding Users}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,20,20,20"/>
+        <ScrollViewer>
+            <StackPanel CanVerticallyScroll="True">
+                <Label Content="Users:"/>
+                <DataGrid ItemsSource="{Binding Users, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
+
+                <Label Content="Quizzes:"/>
+                <DataGrid ItemsSource="{Binding Quizzes, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
+
+
+                <Label Content="Genres:"/>
+                <DataGrid ItemsSource="{Binding Genres, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
+
+                <Label Content="Songs:"/>
+                <DataGrid ItemsSource="{Binding Songs, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
+
+                <Label Content="Scores:"/>
+                <DataGrid ItemsSource="{Binding Scores, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
+
+                <Button Click="ButtonBase_OnClick" Height="100" Width="250" Content="Load"></Button>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
