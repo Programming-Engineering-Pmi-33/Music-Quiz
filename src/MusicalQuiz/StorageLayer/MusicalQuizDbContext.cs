@@ -28,7 +28,7 @@ namespace StorageLayer
         private static string GetDbConnection()
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(Directory.GetCurrentDirectory().Replace("StorageLayer", "ClientLayer"))
                 .AddJsonFile("appsettings.json", false, true);
 
 #if DEBUG
