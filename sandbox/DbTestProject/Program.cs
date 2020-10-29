@@ -14,10 +14,6 @@ namespace DbTestProject
             {
                 Username = "superuser",
                 Password = "kebab",
-                AppRating = new AppRating()
-                {
-                    Points = 5
-                },
                 Quizzes = GenerateQuizzes(1),
                 Scores = new List<Score>()
                 {
@@ -93,7 +89,6 @@ namespace DbTestProject
                     .Include(u => u.Quizzes).ThenInclude(x=>x.Genre)
                     .Include(u => u.Quizzes).ThenInclude(x=>x.QuizSongs).ThenInclude(x=>x.Song)
                     .Include(u => u.Scores)
-                    .Include(u => u.AppRating)
                     .ToList();
                 users.ForEach(u=>PrintData(u));
             }
@@ -102,7 +97,6 @@ namespace DbTestProject
         public static void PrintData(User user)
         {
             Console.WriteLine($"User: {user.Username}, password: {user.Password}");
-            Console.WriteLine($"App rating: {user.AppRating.Points}");
             Console.WriteLine("Quizzes:");
             foreach (var quiz in user.Quizzes)
             {
