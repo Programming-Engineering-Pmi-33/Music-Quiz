@@ -14,6 +14,7 @@ namespace DbTestProject
             {
                 Username = "superuser",
                 Password = "kebab",
+                AppRating = 5,
                 Quizzes = GenerateQuizzes(1),
                 Scores = new List<Score>()
                 {
@@ -97,6 +98,7 @@ namespace DbTestProject
         public static void PrintData(User user)
         {
             Console.WriteLine($"User: {user.Username}, password: {user.Password}");
+            Console.WriteLine($"App rating: {user.AppRating}");
             Console.WriteLine("Quizzes:");
             foreach (var quiz in user.Quizzes)
             {

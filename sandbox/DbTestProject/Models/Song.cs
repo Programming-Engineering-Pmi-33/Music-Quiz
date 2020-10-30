@@ -8,9 +8,14 @@ namespace DbTestProject.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required, MinLength(30)]
         public string Link { get; set; }
 
         public List<QuizSong> QuizSong { get; set; }
+
+        public Song()
+        {
+            QuizSong = new List<QuizSong>();
+        }
     }
 }
