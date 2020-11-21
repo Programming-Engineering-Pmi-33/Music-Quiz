@@ -15,7 +15,7 @@ namespace DbTestProject
 
         public TestDbContext()
         {
-            Database.EnsureDeleted();
+            Database.EnsureCreated();
             Database.EnsureCreated();
         }
 

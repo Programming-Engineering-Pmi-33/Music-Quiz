@@ -8,111 +8,103 @@ namespace DbTestProject
 {
     class Program
     {
-        static User GenerateUser()
+        private static User GetRandomUser(List<User> users)
         {
-            return new User()
-            {
-                Username = "superuser",
-                Password = "kebab",
-                AppRating = 5,
-                Quizzes = GenerateQuizzes(1),
-                Scores = new List<Score>()
-                {
-                    new Score()
-                    {
-                        Points = 5,
-                        QuizId = 1,
-                    },
-                    new Score()
-                    {
-                        Points = 4,
-                        QuizId = 2,
-                    }
-
-                }
-            };
+            var rand = new Random();
+            return users[rand.Next(0, users.Count)];
         }
 
-        static List<Quiz> GenerateQuizzes(int param)
+        private static Song GetRandomSong(List<Song> songs)
         {
-            return new List<Quiz>()
-            {
-                new Quiz()
-                {
-                    PlayTime = 10 + param,
-                    Title = $"My quiz {param}",
-                    AnswerTime = 5 + param,
-                    QuizSongs = GenerateQuizSongs(param),
-                    Genre = new Genre(){Name = "Rock"}
-                },
-
-                new Quiz()
-                {
-                    PlayTime = 15+param,
-                    Title = $"My quiz {param+1}",
-                    AnswerTime = 10+param,
-                    QuizSongs = GenerateQuizSongs(param+1),
-                    Genre = new Genre(){Name = "Rap"}
-                }
-            };
+            var rand = new Random();
+            return songs[rand.Next(0, songs.Count)];
         }
 
-        static List<QuizSong> GenerateQuizSongs(int param)
+        private static Genre GetRandomGenre(IReadOnlyList<Genre> genres)
         {
-            var quizzesSongs = new List<QuizSong>();
-            for (var i = 0; i < 2; i++)
-            {
-                var quizSong = new QuizSong()
-                {
-                    Song = new Song()
-                    {
-                        Link = $"http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG{param}{i}"
-                    }
-                };
-                quizzesSongs.Add(quizSong);
-            }
+            var rand = new Random();
+            return genres[rand.Next(0, genres.Count)];
+        }
 
-            return quizzesSongs;
+        private static Quiz GetRandomQuiz(IReadOnlyList<Quiz> quizzes)
+        {
+            var rand = new Random();
+            return quizzes[rand.Next(0, quizzes.Count)];
         }
 
         static void Main(string[] args)
         {
-            using (var context = new TestDbContext())
-            {
-
-                if (context.Users.FirstOrDefault(u => u.Username == "superuser") == null)
-                {
-                    context.Users.Add(GenerateUser());
-                    context.SaveChanges();
-                }
-
-                var users = context.Users
-                    .Include(u => u.Quizzes).ThenInclude(x=>x.Genre)
-                    .Include(u => u.Quizzes).ThenInclude(x=>x.QuizSongs).ThenInclude(x=>x.Song)
-                    .Include(u => u.Scores)
-                    .ToList();
-                users.ForEach(u=>PrintData(u));
-            }
+            GenerateData();
+            GetData();
         }
 
-        public static void PrintData(User user)
+        private static void GetData()
         {
-            Console.WriteLine($"User: {user.Username}, password: {user.Password}");
-            Console.WriteLine($"App rating: {user.AppRating}");
-            Console.WriteLine("Quizzes:");
-            foreach (var quiz in user.Quizzes)
+            using var context = new TestDbContext();
+            var users = context.Users.ToList();
+            var genres = context.Genres.ToList();
+            var quizzes = context.Quizzes.Include(q => q.QuizSongs).ThenInclude(qs => qs.Song).ToList();
+            var songs = context.Songs.ToList();
+            var scores = context.Scores.Include(s=>s.Quiz).ToList();
+
+            Console.WriteLine("\nUsers:");
+            users.ForEach(u => Console.WriteLine($"Username:{u.Username} Password:{u.Password} Rating:{u.AppRating}"));
+
+            Console.WriteLine("\nGenres:");
+            genres.ForEach(g => Console.WriteLine($"Name: {g.Name}"));
+
+            Console.WriteLine("\nQuizzes:");
+            quizzes.ForEach(q => Console.WriteLine($"Title:{q.Title} PlayTime:{q.PlayTime} AnswerTime:{q.AnswerTime} Id:{q.Id} Genre:{q.GenreId} Owner:{q.OwnerUserId}\n\tSongs:{SongsToString(q)}"));
+
+            Console.WriteLine("\nSongs:");
+            songs.ForEach(s => Console.WriteLine($"Link:{s.Link}"));
+
+
+            Console.WriteLine("\nScores:");
+            scores.ForEach(s => Console.WriteLine($"Id:{s.Id} User:{s.OwnerUserId} Quiz:{s.Quiz.Title} Points:{s.Points}"));
+        }
+
+        private static string SongsToString(Quiz quiz)
+        {
+            var result = string.Empty;
+            quiz.QuizSongs.ForEach(qs => result += $"{qs.Song.Link} ");
+            return result;
+        }
+
+        private static void GenerateData()
+        {
+            var rand = new Random();
+            var dataGenerator = new DataGenerator();
+            var users = dataGenerator.CreateUsers(10);
+            var genres = dataGenerator.CreateGenres(10);
+            var quizzes = dataGenerator.CreateQuizzes(20);
+            var songs = dataGenerator.CreateSongs(50);
+            var scores = dataGenerator.CreateScores(10);
+            foreach (var quiz in quizzes)
             {
-                Console.WriteLine($"\nQuiz: {quiz.Title}, genre: {quiz.Genre.Name}, answer time: {quiz.AnswerTime}, play time: {quiz.PlayTime}\n\tSongs:");
-                foreach (var quizSong in quiz.QuizSongs)
+                quiz.OwnerUser = GetRandomUser(users.ToList());
+                quiz.QuizSongs = new List<QuizSong>();
+                var numOfSongs = rand.Next(1, 5);
+                for (var i = 0; i < numOfSongs; i++)
                 {
-                    Console.WriteLine($"\tLink: {quizSong.Song.Link}");
+                    quiz.QuizSongs.Add(new QuizSong() { Song = GetRandomSong(songs.ToList()) });
                 }
+                quiz.Genre = GetRandomGenre(genres.ToList());
             }
-            Console.WriteLine("Scores:");
-            foreach (var score in user.Scores)
+
+            foreach (var score in scores)
             {
-                Console.WriteLine($"Name: {score.Quiz.Title}, points: {score.Points}");
+                score.OwnerUser = GetRandomUser(users.ToList());
+                score.Quiz = GetRandomQuiz(quizzes.ToList());
             }
+
+            using var context = new TestDbContext();
+            context.Users.AddRange(users);
+            context.Genres.AddRange(genres);
+            context.Quizzes.AddRange(quizzes);
+            context.Songs.AddRange(songs);
+            context.Scores.AddRange(scores);
+            context.SaveChanges();
         }
     }
 }
