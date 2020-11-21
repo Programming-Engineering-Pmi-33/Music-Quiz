@@ -56,6 +56,11 @@ namespace SpotifyAPI
             return songsIds;
         }
 
+        static async Task<SpotifyAPI.Web.FullTrack> GetSongById(string songId) {
+            var song = await _spotify.Tracks.Get(songId);
+            return song;
+        }
+
         public async Task<string> SearchSong(string songName)
         {
             var searchResponse = await _spotify.Search.Item(new SearchRequest(SearchRequest.Types.Track, songName));
