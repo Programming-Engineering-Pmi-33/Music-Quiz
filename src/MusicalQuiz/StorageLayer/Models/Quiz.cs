@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,6 +29,7 @@ namespace StorageLayer.Models
 
         public Genre Genre { get; set; }
         public List<QuizSong> QuizSongs { get; set; }
+        public DateTime CreatedDateTime { get; set; }
 
         public Quiz()
         {
