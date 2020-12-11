@@ -12,6 +12,8 @@ namespace StorageLayer
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Score> Scores { get; set; }
         public DbSet<Song> Songs { get; set; }
+        public DbSet<QuizSong> QuizzesSongs { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -23,6 +25,8 @@ namespace StorageLayer
             modelBuilder.Entity<QuizSong>().HasKey(qs => new { qs.QuizId, qs.SongId });
             modelBuilder.Entity<Score>().Property(u => u.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Song>().Property(u => u.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Quiz>().Property(q => q.CreatedDateTime).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Score>().Property(q => q.CreatedDateTime).ValueGeneratedOnAdd();
         }
 
         private static string GetDbConnection()

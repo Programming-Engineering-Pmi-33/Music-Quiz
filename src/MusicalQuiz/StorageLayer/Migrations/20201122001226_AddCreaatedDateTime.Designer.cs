@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StorageLayer;
@@ -9,9 +10,10 @@ using StorageLayer;
 namespace StorageLayer.Migrations
 {
     [DbContext(typeof(MusicalQuizDbContext))]
-    partial class MusicalQuizDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201122001226_AddCreaatedDateTime")]
+    partial class AddCreaatedDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

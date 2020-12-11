@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StorageLayer.Models
@@ -17,10 +18,10 @@ namespace StorageLayer.Models
         [Required]
         public int Points { get; set; }
 
+        public DateTime CreatedDateTime { get; set; }
 
         public Quiz Quiz { get; set; }
 
-        
         [ForeignKey("OwnerUserId")]
         public User OwnerUser { get; set; }
     }
