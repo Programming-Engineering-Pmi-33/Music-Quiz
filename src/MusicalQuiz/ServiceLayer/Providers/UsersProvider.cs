@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer.Exceptions.UsersProvider;
 using ServiceLayer.Models;
@@ -14,7 +15,7 @@ namespace ServiceLayer.Providers
         public static async Task Login(string username, string password)
         {
             await using var storage = new MusicalQuizDbContext();
-            var user = await storage.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await storage.Users.FirstOrDefaultAsync(u => string.Equals(u.Username, username, StringComparison.CurrentCultureIgnoreCase));
             if (user == null)
             {
                 throw new UsersNotFoundException(username);
@@ -39,7 +40,7 @@ namespace ServiceLayer.Providers
                 throw new ValidationException(nameof(username));
             }
 
-            if (await storage.Users.FirstOrDefaultAsync(u => u.Username == username) != null)
+            if (await storage.Users.FirstOrDefaultAsync(u => string.Equals(u.Username, username, StringComparison.CurrentCultureIgnoreCase)) != null)
             {
                 throw new WrongUsersDataException("User already exists.");
             }
@@ -67,7 +68,7 @@ namespace ServiceLayer.Providers
         public static async Task<bool> DoesUserExists(string username)
         {
             await using var storage = new MusicalQuizDbContext();
-            return await storage.Users.FirstOrDefaultAsync(u => u.Username == username) != null;
+            return await storage.Users.FirstOrDefaultAsync(u => string.Equals(u.Username, username, StringComparison.CurrentCultureIgnoreCase)) != null;
         }
 
         private static User ConvertStorageUserToModel(StorageLayer.Models.User storageUser) => new User(storageUser.Username, storageUser.Password, storageUser.AppRating);

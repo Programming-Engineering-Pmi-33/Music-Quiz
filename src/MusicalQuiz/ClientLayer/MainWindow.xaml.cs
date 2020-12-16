@@ -34,6 +34,7 @@ namespace ClientLayer
 
         private void ShowSnackBar(string message, string closeMessage = "Ок")
         {
+            SnackBar.MessageQueue?.Clear();
             SnackBar.MessageQueue?.Enqueue(
                 message,
                 closeMessage,
