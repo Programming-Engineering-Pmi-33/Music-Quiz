@@ -34,7 +34,7 @@ namespace ServiceLayer.Providers
                 throw new ValidationException(nameof(password));
             }
 
-            if (username.Length < 4 || username.Length > 50)
+            if (username.Length < 4 || username.Length > 16)
             {
                 throw new ValidationException(nameof(username));
             }
