@@ -11,8 +11,6 @@ namespace ServiceLayer.Providers
 {
     public static class QuizzesProvider
     {
-        private static MusicalQuizDbContext Storage { get; } = new MusicalQuizDbContext();
-
         public static async Task Create(Quiz quiz)
         {
             if (quiz.Id != 0)
@@ -20,8 +18,9 @@ namespace ServiceLayer.Providers
                 throw new QuizValidationException(nameof(quiz.Id));
             }
 
+            await using var storage = new MusicalQuizDbContext();
             StorageLayer.Models.Quiz storageQuiz;
-            if (await Storage.Genres.FirstOrDefaultAsync(g => g.Name == quiz.Genre) == null)
+            if (await storage.Genres.FirstOrDefaultAsync(g => g.Name == quiz.Genre) == null)
             {
                 storageQuiz = new StorageLayer.Models.Quiz
                 {
@@ -46,27 +45,28 @@ namespace ServiceLayer.Providers
                 };
             }
 
-            var existingSongs = quiz.Songs.Where(s => Storage.Songs.FirstOrDefaultAsync(ss => ss.Link == s) != null).ToList();
+            var existingSongs = quiz.Songs.Where(s => storage.Songs.FirstOrDefaultAsync(ss => ss.Link == s) != null).ToList();
             foreach (var link in existingSongs)
             {
-                var song = await Storage.Songs.FirstAsync(s => s.Link == link);
+                var song = await storage.Songs.FirstAsync(s => s.Link == link);
                 storageQuiz.QuizSongs.Add(new QuizSong { SongId = song.Id });
             }
 
-            var newSongs = quiz.Songs.Where(s => Storage.Songs.FirstOrDefaultAsync(ss => ss.Link == s) == null).ToList();
+            var newSongs = quiz.Songs.Where(s => storage.Songs.FirstOrDefaultAsync(ss => ss.Link == s) == null).ToList();
             foreach (var link in newSongs)
             {
                 storageQuiz.QuizSongs.Add(new QuizSong { Song = new Song { Link = link } });
             }
 
-            await Storage.Quizzes.AddAsync(storageQuiz);
+            await storage.Quizzes.AddAsync(storageQuiz);
         }
 
         public static async Task<List<Quiz>> GetAllQuizzes()
         {
-            var storageQuizzes = await Storage.Quizzes.Include(q => q.QuizSongs)
+            await using var storage = new MusicalQuizDbContext();
+            var storageQuizzes = await storage.Quizzes.Include(q => q.QuizSongs)
                 .ThenInclude(q => q.Song)
-                .OrderByDescending(q=>q.CreatedDateTime)
+                .OrderByDescending(q => q.CreatedDateTime)
                 .ToListAsync();
 
             return storageQuizzes.Select(s =>
@@ -82,11 +82,12 @@ namespace ServiceLayer.Providers
 
         public static async Task<List<Quiz>> GetOwnersQuizzes()
         {
+            await using var storage = new MusicalQuizDbContext();
             if (!UsersProvider.IsLoggedIn)
             {
                 throw new UnauthorizedException();
             }
-            var storageQuizzes = await Storage.Quizzes.Include(q => q.QuizSongs)
+            var storageQuizzes = await storage.Quizzes.Include(q => q.QuizSongs)
                 .ThenInclude(q => q.Song)
                 .OrderByDescending(q => q.CreatedDateTime)
                 .Where(q => q.OwnerUserId == UsersProvider.CurrentUser.Username)
@@ -105,7 +106,8 @@ namespace ServiceLayer.Providers
 
         public static async Task<Quiz> GetQuiz(int quizId)
         {
-            var storageQuiz = await Storage.Quizzes.Include(q => q.QuizSongs)
+            await using var storage = new MusicalQuizDbContext();
+            var storageQuiz = await storage.Quizzes.Include(q => q.QuizSongs)
                 .ThenInclude(q => q.Song)
                 .FirstOrDefaultAsync(q => q.Id == quizId);
             return new Quiz(storageQuiz.OwnerUserId,

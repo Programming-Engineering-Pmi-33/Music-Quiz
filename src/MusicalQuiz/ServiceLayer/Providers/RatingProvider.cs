@@ -10,11 +10,11 @@ namespace ServiceLayer.Providers
 {
     public static class RatingProvider
     {
-        private static MusicalQuizDbContext Storage { get; } = new MusicalQuizDbContext();
 
         public static async Task<double?> GetAverage()
         {
-            var rating = await Storage.Users.Where(u => u.AppRating != null).Select(s => s.AppRating).ToListAsync();
+            await using var storage = new MusicalQuizDbContext();
+            var rating = await storage.Users.Where(u => u.AppRating != null).Select(s => s.AppRating).ToListAsync();
             if (rating == null || rating.Count == 0)
             {
                 return 0;
@@ -25,8 +25,9 @@ namespace ServiceLayer.Providers
 
         public static async Task<List<Score>> GetAllScores()
         {
-            var users = await Storage.Scores.Include(s => s.OwnerUser).Select(s => s.OwnerUser).ToListAsync();
-            return users.Select(u => new Score(u.Username, Storage.Scores.Include(s => s.OwnerUser)
+            await using var storage = new MusicalQuizDbContext();
+            var users = await storage.Scores.Include(s => s.OwnerUser).Select(s => s.OwnerUser).ToListAsync();
+            return users.Select(u => new Score(u.Username, storage.Scores.Include(s => s.OwnerUser)
                     .Where(s => s.OwnerUser == u)
                     .Sum(s => s.Points)))
                 .ToList();
@@ -34,12 +35,13 @@ namespace ServiceLayer.Providers
 
         public static async Task<List<Score>> GetScoreOfOneQuiz(int quizId)
         {
-            var users = await Storage.Scores.Include(s => s.OwnerUser)
+            await using var storage = new MusicalQuizDbContext();
+            var users = await storage.Scores.Include(s => s.OwnerUser)
                 .Where(s => s.QuizId == quizId)
                 .Select(s => s.OwnerUser)
                 .ToListAsync();
 
-            return users.Select(u => new Score(u.Username, Storage.Scores.Include(s => s.OwnerUser)
+            return users.Select(u => new Score(u.Username, storage.Scores.Include(s => s.OwnerUser)
                     .Where(s => s.OwnerUser == u && s.QuizId == quizId)
                     .Sum(s => s.Points)))
                 .OrderByDescending(s => s.Points)
@@ -53,25 +55,26 @@ namespace ServiceLayer.Providers
                 throw new UnauthorizedException();
             }
 
-            var user = await Storage.Users.FirstOrDefaultAsync(u => u.Username == UsersProvider.CurrentUser.Username);
-            user.AppRating = points;
-            Storage.Users.Update(user);
-            await Storage.SaveChangesAsync();
+            await using var storage = new MusicalQuizDbContext();
+            (await storage.Users.FirstOrDefaultAsync(u => u.Username == UsersProvider.CurrentUser.Username)).AppRating = points;
+            await storage.SaveChangesAsync();
+            await UsersProvider.ReloadUserData();
         }
 
         public static async Task AddResult(int quizId, int points)
         {
+            await using var storage = new MusicalQuizDbContext();
             if (!UsersProvider.IsLoggedIn)
             {
                 throw new UnauthorizedException();
             }
 
-            if (await Storage.Scores.FirstOrDefaultAsync(s =>
+            if (await storage.Scores.FirstOrDefaultAsync(s =>
                 s.OwnerUserId == UsersProvider.CurrentUser.Username && s.QuizId == quizId) == null)
             {
-                await Storage.Scores.AddAsync(new StorageLayer.Models.Score()
+                await storage.Scores.AddAsync(new StorageLayer.Models.Score()
                 { OwnerUserId = UsersProvider.CurrentUser.Username, QuizId = quizId, Points = points });
-                await Storage.SaveChangesAsync();
+                await storage.SaveChangesAsync();
             }
         }
     }
