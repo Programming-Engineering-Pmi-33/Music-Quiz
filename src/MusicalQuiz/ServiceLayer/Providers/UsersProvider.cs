@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer.Exceptions.UsersProvider;
 using ServiceLayer.Models;
@@ -11,11 +12,10 @@ namespace ServiceLayer.Providers
         public static User CurrentUser { get; private set; }
         public static bool IsLoggedIn { get; private set; }
 
-        private static MusicalQuizDbContext Storage { get; } = new MusicalQuizDbContext();
-
         public static async Task Login(string username, string password)
         {
-            var user = await Storage.Users.FirstOrDefaultAsync(u => u.Username == username);
+            await using var storage = new MusicalQuizDbContext();
+            var user = await storage.Users.FirstOrDefaultAsync(u => string.Equals(u.Username, username, StringComparison.CurrentCultureIgnoreCase));
             if (user == null)
             {
                 throw new UsersNotFoundException(username);
@@ -29,20 +29,26 @@ namespace ServiceLayer.Providers
 
         public static async Task Register(string username, string password)
         {
-            if (password.Length < 8)
+            await using var storage = new MusicalQuizDbContext();
+            if (password.Length < 4)
             {
                 throw new ValidationException(nameof(password));
             }
 
-            if (username.Length < 2 || username.Length > 50)
+            if (username.Length < 4 || username.Length > 16)
             {
                 throw new ValidationException(nameof(username));
             }
 
+            if (await storage.Users.FirstOrDefaultAsync(u => string.Equals(u.Username, username, StringComparison.CurrentCultureIgnoreCase)) != null)
+            {
+                throw new WrongUsersDataException("User already exists.");
+            }
+
             var hashedPassword = PasswordHasher.HashPassword(password);
-            var storageUser = new StorageLayer.Models.User() { Username = username, Password = hashedPassword };
-            await Storage.Users.AddAsync(storageUser);
-            await Storage.SaveChangesAsync();
+            var storageUser = new StorageLayer.Models.User { Username = username, Password = hashedPassword };
+            await storage.Users.AddAsync(storageUser);
+            await storage.SaveChangesAsync();
             await Login(username, password);
         }
 
@@ -52,7 +58,18 @@ namespace ServiceLayer.Providers
             IsLoggedIn = false;
         }
 
-        public static async Task<bool> DoesUserExists(string username) => await Storage.Users.FirstOrDefaultAsync(u => u.Username == username) != null;
+        public static async Task ReloadUserData()
+        {
+            await using var storage = new MusicalQuizDbContext();
+            var storageUser = await storage.Users.FirstOrDefaultAsync(u => u.Username == CurrentUser.Username);
+            CurrentUser = ConvertStorageUserToModel(storageUser);
+        }
+
+        public static async Task<bool> DoesUserExists(string username)
+        {
+            await using var storage = new MusicalQuizDbContext();
+            return await storage.Users.FirstOrDefaultAsync(u => string.Equals(u.Username, username, StringComparison.CurrentCultureIgnoreCase)) != null;
+        }
 
         private static User ConvertStorageUserToModel(StorageLayer.Models.User storageUser) => new User(storageUser.Username, storageUser.Password, storageUser.AppRating);
     }

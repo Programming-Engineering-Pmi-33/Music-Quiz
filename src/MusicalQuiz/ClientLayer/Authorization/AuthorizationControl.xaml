@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="ClientLayer.Authorization.AuthorizationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ClientLayer.Authorization"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             mc:Ignorable="d" 
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal" 
+             TextOptions.TextRenderingMode="Auto"        
+             FontFamily="{DynamicResource MaterialDesignFont}" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <wpf:ColorZone Mode="PrimaryMid">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Grid.Column="0" Style="{StaticResource MaterialDesignTabRadioButton}" x:Name="RbTab1" Margin="4" IsChecked="True" Content="Увійти"/>
+                    <RadioButton Grid.Column="1" Style="{StaticResource MaterialDesignTabRadioButton}" x:Name="RbTab2" Margin="4" Content="Зареєструватись"/>
+                </Grid>
+            </wpf:ColorZone>
+            <Border Grid.Row="1" BorderThickness="1 0 1 1" BorderBrush="#FF3F51B5" Padding="16">
+                <Grid>
+                    <Grid Visibility="{Binding IsChecked, ElementName=RbTab1, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+
+                            <!--Login Part-->
+                            <TextBox
+                                Name="LoginBox"
+                                FontSize="25"
+                                Style="{StaticResource MaterialDesignFilledTextFieldTextBox}"
+                                wpf:ValidationAssist.FontSize="20"
+                                wpf:HintAssist.Hint="Логін" MaxLength="16">
+                            </TextBox>
+                            <TextBlock Name="LoginValidationError" Foreground="Red" Visibility="Hidden" FontSize="20"/>
+                            <local:LoginValidator 
+                                Box="{Binding ElementName=LoginBox}"
+                                Block="{Binding ElementName=LoginValidationError}"/>
+
+
+                            <!--Password Part-->
+                            <PasswordBox Name="PasswordBox"
+                                Margin="0,30,0,0"
+                                         Style="{StaticResource MaterialDesignFilledPasswordFieldPasswordBox}"
+                                         wpf:HintAssist.Hint="Пароль" FontSize="25" MaxLength="256">
+                            </PasswordBox>
+                            <TextBlock Name="PasswordValidationError" Foreground="Red" Visibility="Hidden" FontSize="20"/>
+                            <local:PasswordValidator 
+                               Box="{Binding ElementName=PasswordBox}"
+                               Block="{Binding ElementName=PasswordValidationError}"/>
+
+                            <Button
+                                Name="LoginButton"
+                                Click="Login_OnClick"
+                                Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                                Content="Увійти"
+                                Margin="0,30,0,0" Width="265"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Visibility="{Binding IsChecked, ElementName=RbTab2, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+
+                            <!--Login Part-->
+                            <TextBox
+                                Name="RLoginBox"
+                                FontSize="25"
+                                Style="{StaticResource MaterialDesignFilledTextFieldTextBox}"
+                                wpf:ValidationAssist.FontSize="20"
+                                wpf:HintAssist.Hint="Логін"
+                                MaxLength="16">
+                            </TextBox>
+                            <TextBlock Name="RLoginValidationError" Foreground="Red" Visibility="Hidden" FontSize="20"/>
+                            <local:LoginValidator 
+                                Box="{Binding ElementName=RLoginBox}"
+                                Block="{Binding ElementName=RLoginValidationError}"/>
+
+
+                            <!--Password Part-->
+                            <PasswordBox Name="RPasswordBox"
+                                Margin="0,30,0,0"
+                                         Style="{StaticResource MaterialDesignFilledPasswordFieldPasswordBox}"
+                                         wpf:HintAssist.Hint="Пароль" FontSize="25" MaxLength="256">
+                            </PasswordBox>
+                            <TextBlock Name="RPasswordValidationError" Foreground="Red" Visibility="Hidden" FontSize="20"/>
+                            <local:PasswordValidator 
+                               Box="{Binding ElementName=RPasswordBox}"
+                               Block="{Binding ElementName=RPasswordValidationError}"/>
+
+
+                            <!--Repeat Password Part-->
+                            <PasswordBox Name="RepeatPasswordBox"
+                                         Margin="0,30,0,0"
+                                         Style="{StaticResource MaterialDesignFilledPasswordFieldPasswordBox}"
+                                         wpf:HintAssist.Hint="Пароль, повторно" FontSize="25" MaxLength="256">
+                            </PasswordBox>
+                            <TextBlock Name="RepeatPassValidationError" Foreground="Red" Visibility="Hidden" FontSize="20"/>
+
+                            <local:RepeatPasswordValidator 
+                                Box1="{Binding ElementName=RPasswordBox}"
+                                Box2="{Binding ElementName=RepeatPasswordBox}"
+                                Block="{Binding ElementName=RepeatPassValidationError}"/>
+
+                            <Button
+                                Name="RegisterButton"
+                                Click="Register_OnClick"
+                                Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                                Content="Зареєструватись"
+                                Margin="0,30,0,0" Width="265"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

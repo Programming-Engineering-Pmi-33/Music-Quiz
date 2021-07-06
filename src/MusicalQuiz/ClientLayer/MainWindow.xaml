@@ -5,30 +5,60 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="1000">
+        Title="MainWindow" Height="1080" Width="1920"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowStyle="None"
+        ShowInTaskbar="True"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        WindowState="Maximized">
     <Grid>
-        <ScrollViewer>
-            <StackPanel CanVerticallyScroll="True">
-                <Label Content="Users:"/>
-                <DataGrid ItemsSource="{Binding Users, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
-
-                <Label Content="Quizzes:"/>
-                <DataGrid ItemsSource="{Binding Quizzes, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
-
-
-                <Label Content="Genres:"/>
-                <DataGrid ItemsSource="{Binding Genres, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
-
-                <Label Content="Songs:"/>
-                <DataGrid ItemsSource="{Binding Songs, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
-
-                <Label Content="Scores:"/>
-                <DataGrid ItemsSource="{Binding Scores, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,20"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Click="AddDataOnClick" Height="100" Width="250" Content="Generate"></Button>
-                    <Button Click="CleanDataOnClick" Height="100" Width="250" Content="Clean"></Button>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="#FF3F51B5">
+            <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="LibraryMusic" Foreground="White" Height="25" Width="25" Margin="0,3,0,0"/>
+                <Label FontSize="16">Musical Quiz</Label>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0">
+                    <Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Click="Profile_Click">
+                        <materialDesign:PackIcon Kind="User"/>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Click="Minimize_Click">
+                        <materialDesign:PackIcon Kind="WindowMinimize"/>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFloatingActionAccentButton}" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Click="ShutDown_Click">
+                        <materialDesign:PackIcon Kind="Close"/>
+                    </Button>
                 </StackPanel>
             </StackPanel>
-        </ScrollViewer>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="0" Background="#FF3F51B5"/>
+        <Grid Grid.Row="1" Grid.Column="2" Background="#FF3F51B5"/>
+        <Grid Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="0" Background="#FF3F51B5"/>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <!-- Content-->
+
+            <materialDesign:Snackbar
+                MinWidth="300"
+                x:Name="SnackBar"
+                MessageQueue="{materialDesign:MessageQueue}"/>
+        </Grid>
     </Grid>
 </Window>
